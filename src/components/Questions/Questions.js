@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Questions.css";
+import loading from "../loading.gif";
 const Questions = (props) => {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [clickViewResult, setClickViewResult] = useState(false);
@@ -38,49 +39,56 @@ const Questions = (props) => {
 
   return (
     <div className="container">
-      {clickViewResult && (
+      {props.isLoading && (
+        <div className="loading">
+          <img src={loading} className="loading" />
+          <p>Your questions are loading</p>
+        </div>
+      )}
+      {clickViewResult && !props.isLoading && (
         <div className="score m-3">
           <h1>Score : {correctAnswers}</h1>
         </div>
       )}
 
-      {props.questions?.map((questionsData, qIdx) => {
-        return (
-          <div key={qIdx} className="question-box">
-            <div className="question-heading">
-              <h1>{questionsData.question}</h1>
-            </div>
+      {!props.isLoading &&
+        props.questions?.map((questionsData, qIdx) => {
+          return (
+            <div key={qIdx} className="question-box">
+              <div className="question-heading">
+                <h1>{window.atob(questionsData.question)}</h1>
+              </div>
 
-            <div className="answer-buttons">
-              {questionsData.answers.map((ans, ansIdx) => {
-                return (
-                  <button
-                    disabled={disabledBtn}
-                    key={ansIdx}
-                    onClick={() => props.handleAnswerClick(ans, qIdx, ansIdx)}
-                    style={
-                      clickViewResult && questionsData.correct_answer === ans
-                        ? { backgroundColor: "green" }
-                        : questionsData.correct_answer !==
-                            questionsData.chosenAnswer &&
-                          questionsData.chosenAnswer === ans &&
-                          clickViewResult
-                        ? { backgroundColor: "red" }
-                        : questionsData.chosenAnswer === ans
-                        ? { backgroundColor: "purple" }
-                        : null
-                    }
-                  >
-                    {ans}
-                  </button>
-                );
-              })}
+              <div className="answer-buttons">
+                {questionsData.answers.map((ans, ansIdx) => {
+                  return (
+                    <button
+                      disabled={disabledBtn}
+                      key={ansIdx}
+                      onClick={() => props.handleAnswerClick(ans, qIdx, ansIdx)}
+                      style={
+                        clickViewResult && questionsData.correct_answer === ans
+                          ? { backgroundColor: "green" }
+                          : questionsData.correct_answer !==
+                              questionsData.chosenAnswer &&
+                            questionsData.chosenAnswer === ans &&
+                            clickViewResult
+                          ? { backgroundColor: "red" }
+                          : questionsData.chosenAnswer === ans
+                          ? { backgroundColor: "purple" }
+                          : null
+                      }
+                    >
+                      {window.atob(ans)}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
 
-      {props.questions && (
+      {props.questions && !props.isLoading && (
         <div className="results-btn">
           <button onClick={viewResult}>View Result</button>
         </div>

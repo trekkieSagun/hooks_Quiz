@@ -8,6 +8,8 @@ function Dashboard() {
   const [questions, setQuestions] = useState(null);
   const [categoryList, setcategoryList] = useState(null);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const fetchData = async () => {
     const res = await axios.get("https://opentdb.com/api_category.php");
     setcategoryList(res.data.trivia_categories);
@@ -29,6 +31,10 @@ function Dashboard() {
     setInputValue({ ...inputValue, [name]: value });
   };
 
+  const newStart = () => {
+    setQuestions(null);
+  };
+
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
       let j = Math.floor(Math.random() * (i + 1));
@@ -39,10 +45,10 @@ function Dashboard() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     axios
       .get(
-        `https://opentdb.com/api.php?amount=${inputValue.noOfQuestions}&category=${inputValue.category}&difficulty=${inputValue.difficulty}&type=${inputValue.questionType}`
+        `https://opentdb.com/api.php?amount=${inputValue.noOfQuestions}&category=${inputValue.category}&difficulty=${inputValue.difficulty}&type=${inputValue.questionType}&encode=base64`
       )
       .then((res) => {
         const newQuestions = res.data.results;
@@ -51,6 +57,7 @@ function Dashboard() {
           q.answers = shuffle(q.answers);
         });
         setQuestions(newQuestions);
+        setIsLoading(false);
       });
   };
 
@@ -121,13 +128,26 @@ function Dashboard() {
             />
           </div>
           <div className="row-auto row-button">
-            <button type="submit" className="btn btn-primary">
-              Submit
-            </button>
+            {!questions?.length > 0 && (
+              <button type="submit" className="btn btn-primary">
+                Submit
+              </button>
+            )}
           </div>
         </form>
       </div>
-      <Questions questions={questions} handleAnswerClick={handleAnswerClick} />
+      {questions?.length > 0 ? (
+        <div>
+          <div className="btn-reload">
+            <button onClick={newStart}>Start new game</button>
+          </div>
+        </div>
+      ) : null}
+      <Questions
+        questions={questions}
+        handleAnswerClick={handleAnswerClick}
+        isLoading={isLoading}
+      />
     </div>
   );
 }
