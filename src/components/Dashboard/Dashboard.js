@@ -7,24 +7,22 @@ import Questions from "../Questions/Questions";
 function Dashboard() {
   const [questions, setQuestions] = useState(null);
   const [categoryList, setcategoryList] = useState(null);
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const fetchData = async () => {
-    const res = await axios.get("https://opentdb.com/api_category.php");
-    setcategoryList(res.data.trivia_categories);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const [inputValue, setInputValue] = useState({
     category: "",
     difficulty: "",
     questionType: "",
     noOfQuestions: 3,
   });
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    const res = await axios.get("https://opentdb.com/api_category.php");
+    setcategoryList(res.data.trivia_categories);
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -33,6 +31,13 @@ function Dashboard() {
 
   const newStart = () => {
     setQuestions(null);
+    setInputValue({
+      ...inputValue,
+      category: "",
+      difficulty: "",
+      questionType: "",
+      noOfQuestions: 3,
+    });
   };
 
   function shuffle(array) {
@@ -80,6 +85,7 @@ function Dashboard() {
             <select
               className="form-select"
               name="category"
+              value={inputValue.category}
               onChange={handleChange}
             >
               <option defaultValue>Choose category...</option>
@@ -97,6 +103,7 @@ function Dashboard() {
             <select
               className="form-select"
               name="difficulty"
+              value={inputValue.difficulty}
               onChange={handleChange}
             >
               <option defaultValue>Choose...</option>
@@ -109,6 +116,7 @@ function Dashboard() {
             <h4>Questions Type</h4>
             <select
               className="form-select"
+              value={inputValue.questionType}
               name="questionType"
               onChange={handleChange}
             >
