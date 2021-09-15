@@ -9,6 +9,7 @@ const Questions = (props) => {
   useEffect(() => {
     setClickViewResult(false);
     setDisabledBtn(false);
+    setCorrectAnswers(0);
   }, [props.questions]);
 
   const viewResult = (e) => {

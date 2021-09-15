@@ -128,7 +128,7 @@ function Dashboard() {
           <div className="col-auto">
             <h4>No. of Questions</h4>
             <input
-              defaultValue="3"
+              value={inputValue.noOfQuestions}
               className="form-control"
               type="number"
               name="noOfQuestions"
